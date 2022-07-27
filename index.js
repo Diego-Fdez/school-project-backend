@@ -14,6 +14,7 @@ import sectionRoute from './routes/sectionRoute.js';
 
 //Routes
 const app = express();
+app.use(express.json());
 
 //Middleware
 // app.use(bodyParser.json({ limit: '30mb', extended: true }));
