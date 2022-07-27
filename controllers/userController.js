@@ -1,10 +1,10 @@
-import UserModel from '../models/userModel.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import { emailForgetPassword } from '../helpers/email.js';
 import generateId from '../helpers/generateId.js';
 import CourseModel from '../models/courseModel.js';
+import UserModel from '../models/usersModel.js';
 
 //register a new user
 export const registerUser = async (req, res) => {

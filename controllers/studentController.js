@@ -1,6 +1,6 @@
 import { validationResult } from 'express-validator';
 import StudentModel from '../models/studentModel.js';
-import UserModel from '../Models/userModel.js';
+import UserModel from '../models/usersModel.js';
 
 //register a new student
 export const registerStudent = async (req, res) => {
