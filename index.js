@@ -24,15 +24,23 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => app.listen(PORT, () => console.log('Listening')))
-  .catch((error) => console.log(error));
+const DbConnect = async () => {
+  try {
+    const connection = await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    const url = `${connection.connection.host}:
+    ${connection.connection.port}`;
+    console.log(url);
+  } catch (error) {
+    console.log(`error: ${error.message}`);
+    process.exit(1);
+  }
+};
+DbConnect();
 
-//configurar cors
+//cors configuration
 const whitelist = [process.env.FRONTEND_URL];
 
 const corsOptions = {
@@ -47,7 +55,11 @@ const corsOptions = {
   },
 };
 
-app.use(cors(corsOptions));
+//app.use(cors(corsOptions));
+
+const server = app.listen(PORT, () => {
+  console.log(`Listening ${PORT}`);
+});
 
 //usage of routes
 app.use('/auth', UserRoute);
