@@ -27,7 +27,7 @@ router.put(
   editQtResults
 );
 
-router.get('/', getStudentResultsById);
+router.get('/:studentId', getStudentResultsById);
 
 router.get('/all', getResults);
 

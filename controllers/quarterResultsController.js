@@ -74,16 +74,10 @@ export const editQtResults = async (req, res) => {
 
 //function that gets all results student by StudentID
 export const getStudentResultsById = async (req, res) => {
-  const { studentId } = req.body;
-
-  const student = await StudentModel.findOne({
-    studentId,
-  }).select(
-    '-studentId -studentName -studentFirstName -studentLastName -teachers -createdAt -updatedAt -__v'
-  );
+  const { studentId } = req.params;
 
   const currentStudent = await QuarterResultsModel.findOne({
-    id: student._id.toString(),
+    studentId,
   })
     .select('-_id -createdAt -updatedAt -__v')
     .populate('course', 'desc')
@@ -93,7 +87,7 @@ export const getStudentResultsById = async (req, res) => {
 
   try {
     //verify that the student exists
-    if (!student) {
+    if (!currentStudent) {
       return res.status(404).json({ message: 'Student not found' });
     }
 

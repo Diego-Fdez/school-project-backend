@@ -30,7 +30,7 @@ export const registerStudent = async (req, res) => {
 
 //function that gets a student by project ID
 export const getStudent = async (req, res) => {
-  const { studentId } = req.body;
+  const { studentId } = req.params;
 
   const student = await StudentModel.findOne({ studentId }).populate(
     'teachers',

@@ -58,7 +58,7 @@ export const loginUser = async (req, res) => {
         process.env.JWT_SECRET,
         { expiresIn: '8h' }
       );
-      const { _id, email, firstName, userName, isAdmin } = userExist;
+      const { _id, email, firstName, userName, isAdmin, isTeacher } = userExist;
       res.json({
         token: jwtToken,
         userInfo: {
@@ -67,6 +67,7 @@ export const loginUser = async (req, res) => {
           firstName,
           userName,
           isAdmin,
+          isTeacher,
         },
       });
     } else {

@@ -20,7 +20,7 @@ router.post(
   registerStudent
 );
 
-router.get('/', getStudent);
+router.get('/:studentId', getStudent);
 router.put('/', editStudent);
 router.get('/all', getAllStudents);
 router.put('/add/:id', addTeacher);
