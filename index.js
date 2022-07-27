@@ -55,7 +55,7 @@ const corsOptions = {
   },
 };
 
-//app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 const server = app.listen(PORT, () => {
   console.log(`Listening ${PORT}`);
