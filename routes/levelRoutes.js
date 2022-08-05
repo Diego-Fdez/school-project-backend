@@ -5,20 +5,23 @@ import {
   getAllLevels,
   registerLevel,
 } from '../controllers/levelController.js';
+import { checkAuthAdmin, checkAuthTeacher } from '../middleware/checkAuth.js';
 
 const router = express.Router();
 
 router.post(
   '/',
   body('desc', 'description is required').not().isEmpty(),
+  checkAuthAdmin,
   registerLevel
 );
 
 router.put(
   '/:id',
   body('desc', 'description is required').not().isEmpty(),
+  checkAuthAdmin,
   editLevel
 );
 
-router.get('/', getAllLevels);
+router.get('/', checkAuthTeacher, getAllLevels);
 export default router;

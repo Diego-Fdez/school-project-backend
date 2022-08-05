@@ -1,5 +1,4 @@
 import express from 'express';
-// import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -15,10 +14,6 @@ import sectionRoute from './routes/sectionRoute.js';
 //Routes
 const app = express();
 app.use(express.json());
-
-//Middleware
-// app.use(bodyParser.json({ limit: '30mb', extended: true }));
-// app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }));
 
 dotenv.config();
 

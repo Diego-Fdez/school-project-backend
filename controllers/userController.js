@@ -54,7 +54,11 @@ export const loginUser = async (req, res) => {
     const didMatch = bcrypt.compareSync(password, userExist.password);
     if (didMatch) {
       const jwtToken = jwt.sign(
-        { _id: userExist._id },
+        {
+          _id: userExist._id,
+          isAdmin: userExist.isAdmin,
+          isTeacher: userExist.isTeacher,
+        },
         process.env.JWT_SECRET,
         { expiresIn: '8h' }
       );
@@ -161,7 +165,7 @@ export const deleteCourse = async (req, res) => {
 
 //function that gets a teacher by ID
 export const getTeacher = async (req, res) => {
-  const { email } = req.body;
+  const { email } = req.params;
 
   const teacher = await UserModel.findOne({ email }).populate(
     'courses',
@@ -174,7 +178,8 @@ export const getTeacher = async (req, res) => {
       return res.status(404).json({ message: 'Teacher not found' });
     }
 
-    const { createdAt, updatedAt, __v, ...data } = teacher._doc;
+    const { createdAt, password, token, updatedAt, __v, ...data } =
+      teacher._doc;
     return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -20,7 +20,8 @@ export const registerCourse = async (req, res) => {
 
   try {
     await newCourse.save();
-    res.status(201).json('Course register successfully!');
+    const { createdAt, updatedAt, __v, ...data } = newCourse._doc;
+    res.status(201).json({ message: 'Course register successfully!', data });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -42,10 +43,11 @@ export const editSCourse = async (req, res) => {
   }
 
   //if I pass the previous validations, we modify the DB
-  course.desc = req.body.desc;
+  course.desc = req.body.desc || course.desc;
   try {
-    await course.save();
-    return res.status(200).json('Updated course!');
+    const newCourse = await course.save();
+    const { createdAt, updatedAt, __v, ...data } = newCourse._doc;
+    return res.status(200).json({ message: 'Updated course!', data });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

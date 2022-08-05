@@ -22,7 +22,9 @@ export const registerStudent = async (req, res) => {
 
   try {
     await newUser.save();
-    return res.status(201).json('Student register successfully!');
+    return res
+      .status(201)
+      .json({ message: 'Student register successfully!', newUser });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -67,7 +69,9 @@ export const getAllStudents = async (req, res) => {
 export const editStudent = async (req, res) => {
   const { studentId } = req.body;
 
-  const student = await StudentModel.findOne({ studentId });
+  const student = await StudentModel.findOne({ studentId })
+    .select('-createdAt -updatedAt -__v')
+    .populate('teachers', 'userName firstName');
   //verify that the student exists
   if (!student) {
     return res.status(404).json({ message: 'Student not found' });
@@ -85,7 +89,7 @@ export const editStudent = async (req, res) => {
   //if I pass the previous validations, we modify the DB
   try {
     await student.save();
-    return res.status(200).json('Updated student!');
+    return res.status(200).json({ message: 'Updated student!', student });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -93,14 +97,16 @@ export const editStudent = async (req, res) => {
 
 //add teachers into student
 export const addTeacher = async (req, res) => {
-  const student = await StudentModel.findById(req.params.id);
+  const student = await StudentModel.findById(req.params.id)
+    .select('-createdAt -updatedAt -__v')
+    .populate('teachers', 'userName firstName');
   if (!student) {
     return res.status(404).json({ message: 'Student not found' });
   }
 
   const { email } = req.body;
   const teacher = await UserModel.findOne({ email }).select(
-    '-createdAt -password -token -updatedAt -__v'
+    '-isAdmin -IsTeacher -courses -createdAt -updatedAt -__v'
   );
   //we check if the teacher exists
   if (!teacher) {
@@ -113,6 +119,7 @@ export const addTeacher = async (req, res) => {
       .status(404)
       .json({ message: 'The teacher was already included' });
   }
+
   //if I pass the previous validations, we modify the DB
   student.teachers.push(teacher._id);
   await student.save();

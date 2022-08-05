@@ -5,20 +5,23 @@ import {
   getAllCourses,
   registerCourse,
 } from '../controllers/courseController.js';
+import { checkAuthAdmin, checkAuthTeacher } from '../middleware/checkAuth.js';
 
 const router = express.Router();
 
 router.post(
   '/',
   body('desc', 'description is required').not().isEmpty(),
+  checkAuthAdmin,
   registerCourse
 );
 
 router.put(
   '/:id',
   body('desc', 'description is required').not().isEmpty(),
+  checkAuthAdmin,
   editSCourse
 );
 
-router.get('/', getAllCourses);
+router.get('/', checkAuthTeacher, getAllCourses);
 export default router;

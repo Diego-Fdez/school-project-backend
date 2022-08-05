@@ -10,6 +10,7 @@ import {
   loginUser,
   registerUser,
 } from '../controllers/userController.js';
+import { checkAuthAdmin, checkAuthTeacher } from '../middleware/checkAuth.js';
 
 const router = express.Router();
 
@@ -30,9 +31,9 @@ router.post(
 
 router.post('/forgetpwd', forgetPassword);
 router.get('/forgetpwd/:token', checkToken);
-router.put('/add/:id', addCourse);
-router.put('/delete/:id', deleteCourse);
-router.get('/', getTeacher);
-router.get('/all', getAllTeacher);
+router.put('/add/:id', checkAuthAdmin, addCourse);
+router.put('/delete/:id', checkAuthAdmin, deleteCourse);
+router.get('/:email', checkAuthTeacher, getTeacher);
+router.get('/all', checkAuthAdmin, getAllTeacher);
 
 export default router;
