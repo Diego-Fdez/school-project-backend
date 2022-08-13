@@ -18,7 +18,7 @@ router.post(
   registerList
 );
 router.get('/all', checkAuthTeacher, getAllSections);
-router.get('/', checkAuthTeacher, getSection);
+router.get('/:desc', checkAuthTeacher, getSection);
 router.put('/add/:id', checkAuthAdmin, addStudent);
 router.put('/delete/:id', checkAuthAdmin, deleteStudent);
 router.delete('/:id', checkAuthAdmin, deleteList);

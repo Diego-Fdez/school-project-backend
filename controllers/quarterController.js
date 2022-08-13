@@ -19,8 +19,9 @@ export const registerQuarter = async (req, res) => {
   const newQt = new QuarterModel(req.body);
 
   try {
-    await newQt.save();
-    res.status(201).json('Quarter register successfully!');
+    const result = await newQt.save();
+    const { createdAt, updatedAt, __v, ...data } = result._doc;
+    res.status(201).json({ message: 'Quarter register successfully!', data });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -44,8 +45,9 @@ export const editSQuarter = async (req, res) => {
   //if I pass the previous validations, we modify the D
   quarter.desc = req.body.desc;
   try {
-    await quarter.save();
-    return res.status(200).json('Updated quarter!');
+    const result = await quarter.save();
+    const { createdAt, updatedAt, __v, ...data } = result._doc;
+    return res.status(200).json({ message: 'Updated quarter!', data });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

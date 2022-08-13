@@ -19,8 +19,9 @@ export const registerLevel = async (req, res) => {
   const level = new LevelModel(req.body);
 
   try {
-    await level.save();
-    res.status(201).json('Level register successfully!');
+    const newLevel = await level.save();
+    const { createdAt, updatedAt, __v, ...data } = newLevel._doc;
+    res.status(201).json({ message: 'Level register successfully!', data });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -35,7 +36,7 @@ export const editLevel = async (req, res) => {
     return res.status(404).json({ message: 'ID not valid!' });
   }
 
-  const level = await LevelModel.findOne({ id });
+  const level = await LevelModel.findById(id);
   //verify that the quarter exists
   if (!level) {
     return res.status(404).json({ message: 'Level not found' });
@@ -44,8 +45,9 @@ export const editLevel = async (req, res) => {
   //if I pass the previous validations, we modify the D
   level.desc = req.body.desc;
   try {
-    await level.save();
-    return res.status(200).json('Updated level!');
+    const result = await level.save();
+    const { createdAt, updatedAt, __v, ...data } = result._doc;
+    return res.status(200).json({ message: 'Updated level!', data });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

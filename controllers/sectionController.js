@@ -11,16 +11,18 @@ export const registerList = async (req, res) => {
     return res.status(400).json({ error: mistakes.array() });
   }
 
-  const { studentsInfo, desc } = req.body;
-  const studentExist = await SectionModel.findOne({ studentsInfo });
-  if (studentExist) {
+  const { desc } = req.body;
+  const sectionExist = await SectionModel.findOne({ desc });
+  if (sectionExist) {
     return res
       .status(400)
-      .json({ message: 'Student with this ID already exist' });
+      .json({ message: 'Section with this description already exist' });
   }
 
+  const newData = new SectionModel(req.body);
+
   try {
-    const newList = await SectionModel.create({ studentsInfo, desc });
+    const newList = await newData.save();
     return res
       .status(201)
       .json({ message: 'Section list register successfully!', newList });
@@ -34,7 +36,10 @@ export const getAllSections = async (req, res) => {
   try {
     const list = await SectionModel.find()
       .select('-createdAt -updatedAt -__v')
-      .populate('studentsInfo', 'studentName studentFirstName studentLastName');
+      .populate(
+        'studentsInfo',
+        'studentName studentFirstName studentLastName studentId'
+      );
     return res.status(200).json(list);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -43,12 +48,15 @@ export const getAllSections = async (req, res) => {
 
 //function that get a section by desc
 export const getSection = async (req, res) => {
-  const { desc } = req.body;
+  const { desc } = req.params;
 
   try {
     const result = await SectionModel.findOne({ desc })
       .select('-createdAt -updatedAt -__v')
-      .populate('studentsInfo', 'studentName studentFirstName studentLastName');
+      .populate(
+        'studentsInfo',
+        'studentName studentFirstName studentLastName studentId _id'
+      );
     //verify that the section exists
     if (!result) {
       return res.status(404).json({ message: 'Section not found' });
@@ -62,12 +70,14 @@ export const getSection = async (req, res) => {
 
 //add student into section
 export const addStudent = async (req, res) => {
-  const section = await SectionModel.findById(req.params.id);
+  const id = req.params.id;
 
   const valid = mongoose.Types.ObjectId.isValid(id);
   if (!valid) {
     return res.status(404).json({ message: 'Not a valid section id' });
   }
+
+  const section = await SectionModel.findById(id);
 
   if (!section) {
     return res.status(404).json({ message: 'Section not found' });
@@ -75,7 +85,7 @@ export const addStudent = async (req, res) => {
 
   const { studentId } = req.body;
   const student = await StudentModel.findOne({ studentId }).select(
-    '-createdAt -updatedAt -__v -studentName -studentFirstName -studentLastName -teachers'
+    '-createdAt -updatedAt -__v -teachers -contact -observations'
   );
   //we check if the student exists
   if (!student) {
@@ -90,18 +100,25 @@ export const addStudent = async (req, res) => {
   }
   //if I pass the previous validations, we modify the DB
   section.studentsInfo.push(student._id);
-  await section.save();
-  return res.status(200).json('Student successfully included');
+
+  const studentSaved = await section.save();
+  const { createdAt, updatedAt, __v, ...newStudent } = studentSaved._doc;
+
+  return res
+    .status(200)
+    .json({ message: 'Student successfully included', newStudent, student });
 };
 
 //delete student from section
 export const deleteStudent = async (req, res) => {
-  const section = await SectionModel.findById(req.params.id);
+  const id = req.params.id;
 
   const valid = mongoose.Types.ObjectId.isValid(id);
   if (!valid) {
     return res.status(404).json({ message: 'Not a valid section id' });
   }
+
+  const section = await SectionModel.findById(id);
 
   if (!section) {
     return res.status(404).json({ message: 'Section not found' });
@@ -122,7 +139,9 @@ export const deleteList = async (req, res) => {
     return res.status(404).json({ message: 'Not a valid section id' });
   }
 
-  const list = await SectionModel.findById(id);
+  const list = await SectionModel.findById(id).select(
+    '-createdAt -updatedAt -desc -__v'
+  );
   //check that the section exists
   if (!list) {
     return res.status(404).json({ message: 'Section not found' });
@@ -131,7 +150,7 @@ export const deleteList = async (req, res) => {
   //if it passes the validations, the list is removed
   try {
     await list.deleteOne();
-    return res.status(200).json('Section deleted!');
+    return res.status(200).json({ message: 'Section deleted!', list });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

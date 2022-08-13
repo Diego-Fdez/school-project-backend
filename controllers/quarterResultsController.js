@@ -16,7 +16,12 @@ export const registerQuarterResult = async (req, res) => {
     course,
     studentId,
     createdAt,
-  });
+  })
+    .populate('courses', 'desc')
+    .populate('studentId', 'studentName studentFirstName studentLastName')
+    .populate('quarter', 'desc')
+    .populate('level', 'desc');
+
   if (exist) {
     return res
       .status(400)
@@ -26,10 +31,11 @@ export const registerQuarterResult = async (req, res) => {
   const newData = new QuarterResultsModel(req.body);
 
   try {
-    await newData.save();
+    const result = await newData.save();
+    const { createdAt, updatedAt, __v, ...data } = result._doc;
     return res
       .status(201)
-      .json({ message: 'Data register successfully!', newData });
+      .json({ message: 'Data register successfully!', data });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -44,7 +50,13 @@ export const editQtResults = async (req, res) => {
     return res.status(404).json({ message: 'ID not valid!' });
   }
 
-  const qtResults = await QuarterResultsModel.findById(id);
+  const qtResults = await QuarterResultsModel.findById(id)
+    .select('-createdAt -updatedAt -__v')
+    .populate('course', 'desc')
+    .populate('studentId', 'studentName studentFirstName studentLastName')
+    .populate('quarter', 'desc')
+    .populate('level', 'desc');
+
   //verify that the quarter results exists
   if (!qtResults) {
     return res
@@ -54,6 +66,7 @@ export const editQtResults = async (req, res) => {
 
   //if the user does not send all the data, use the data from the DB
   qtResults.course = req.body.course || qtResults.course;
+  qtResults.quarter = req.body.quarter || qtResults.quarter;
   qtResults.studentId = req.body.studentId || qtResults.studentId;
   qtResults.test1 = req.body.test1 || qtResults.test1;
   qtResults.perTest1 = req.body.perTest1 || qtResults.perTest1;
@@ -65,8 +78,16 @@ export const editQtResults = async (req, res) => {
 
   //if I pass the previous validations, we modify the DB
   try {
-    await qtResults.save();
-    return res.status(200).json({ message: 'Updated Results!', qtResults });
+    const search = await qtResults.save();
+
+    const result = await QuarterResultsModel.findById(search._id)
+      .select('-createdAt -updatedAt -__v')
+      .populate('course', 'desc')
+      .populate('studentId', 'studentName studentFirstName studentLastName')
+      .populate('quarter', 'desc')
+      .populate('level', 'desc');
+
+    return res.status(200).json({ message: 'Updated Results!', result });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -76,10 +97,10 @@ export const editQtResults = async (req, res) => {
 export const getStudentResultsById = async (req, res) => {
   const { studentId } = req.params;
 
-  const currentStudent = await QuarterResultsModel.findOne({
+  const currentStudent = await QuarterResultsModel.find({
     studentId,
   })
-    .select('-_id -createdAt -updatedAt -__v')
+    .select('-createdAt -updatedAt -__v')
     .populate('course', 'desc')
     .populate('studentId', 'studentName studentFirstName studentLastName')
     .populate('quarter', 'desc')
@@ -97,7 +118,7 @@ export const getStudentResultsById = async (req, res) => {
   }
 };
 
-//function that get Results by ID
+//function that get all Results
 export const getResults = async (req, res) => {
   try {
     const results = await QuarterResultsModel.find()
