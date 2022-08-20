@@ -4,9 +4,9 @@ import {
   registerStudent,
   getStudent,
   editStudent,
-  getAllStudents,
   addTeacher,
   deleteTeacher,
+  getAllStudents,
 } from '../controllers/studentController.js';
 import { checkAuthAdmin, checkAuthTeacher } from '../middleware/checkAuth.js';
 
@@ -22,7 +22,7 @@ router.post(
   registerStudent
 );
 
-router.get('/:studentId', getStudent);
+router.get('/student/:studentId', getStudent);
 router.put('/', checkAuthAdmin, editStudent);
 router.get('/all', checkAuthTeacher, getAllStudents);
 router.put('/add/:id', checkAuthAdmin, addTeacher);

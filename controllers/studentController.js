@@ -33,18 +33,15 @@ export const registerStudent = async (req, res) => {
 //function that gets a student by project ID
 export const getStudent = async (req, res) => {
   const { studentId } = req.params;
-
   const student = await StudentModel.findOne({ studentId }).populate(
     'teachers',
     'userName firstName'
   );
-
   try {
     //verify that the student exists
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
     }
-
     const { createdAt, updatedAt, __v, ...data } = student._doc;
     return res.status(200).json(data);
   } catch (error) {
@@ -54,12 +51,9 @@ export const getStudent = async (req, res) => {
 
 //function that gets all students
 export const getAllStudents = async (req, res) => {
-  const student = await StudentModel.find().select(
-    '-createdAt -updatedAt -__v'
-  );
-
   try {
-    return res.status(200).json(student);
+    const students = await StudentModel.find();
+    return res.status(200).json(students);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

@@ -100,7 +100,7 @@ export const getStudentResultsById = async (req, res) => {
   const currentStudent = await QuarterResultsModel.find({
     studentId,
   })
-    .select('-createdAt -updatedAt -__v')
+    .select('-updatedAt -__v')
     .populate('course', 'desc')
     .populate('studentId', 'studentName studentFirstName studentLastName')
     .populate('quarter', 'desc')

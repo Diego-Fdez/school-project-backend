@@ -33,7 +33,7 @@ router.post('/forgetpwd', forgetPassword);
 router.get('/forgetpwd/:token', checkToken);
 router.put('/add/:id', checkAuthAdmin, addCourse);
 router.put('/delete/:id', checkAuthAdmin, deleteCourse);
-router.get('/:email', checkAuthTeacher, getTeacher);
+router.get('/teacher/:email', checkAuthTeacher, getTeacher);
 router.get('/all', checkAuthAdmin, getAllTeacher);
 
 export default router;
