@@ -19,6 +19,9 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
+/**
+ * It connects to the MongoDB database using the Mongoose library.
+ */
 const DbConnect = async () => {
   try {
     const connection = await mongoose.connect(process.env.MONGO_URI, {
@@ -41,10 +44,10 @@ const whitelist = [process.env.FRONTEND_URL];
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.includes(origin)) {
-      //Puede consultar la API
+      //You can refer to the API
       callback(null, true);
     } else {
-      //No esta Permitido
+      //It's not allowed
       callback(new Error('Error de Cors'));
     }
   },
@@ -52,7 +55,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-const server = app.listen(PORT, () => {
+/* Listening to the port. */
+app.listen(PORT, () => {
   console.log(`Listening ${PORT}`);
 });
 
