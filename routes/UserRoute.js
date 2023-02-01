@@ -14,6 +14,8 @@ import { checkAuthAdmin, checkAuthTeacher } from '../middleware/checkAuth.js';
 
 const router = express.Router();
 
+/* A post request to the route /register. It is using the body method from express-validator to
+validate the email, userName, firstName, and password. It is then calling the registerUser function. */
 router.post(
   '/register',
   body('email', 'email is required').isEmail(),
