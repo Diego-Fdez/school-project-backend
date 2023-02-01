@@ -22,12 +22,14 @@ export const registerUser = async (req, res) => {
       .json({ message: 'User with this email already exist' });
   }
 
+  /* Encrypting the password. */
   const salt = await bcrypt.genSalt(10);
   const hashedPass = await bcrypt.hash(req.body.password, salt);
   req.body.password = hashedPass;
   const newUser = new UserModel(req.body);
 
   try {
+    /* Generating a random string. */
     newUser.token = generateId();
     await newUser.save();
     res.status(201).json('User register successfully!');
@@ -51,8 +53,10 @@ export const loginUser = async (req, res) => {
       return res.status(404).json({ message: 'User does not exist!' });
     }
 
+    /* Comparing the password that the user entered with the password that is stored in the database. */
     const didMatch = bcrypt.compareSync(password, userExist.password);
     if (didMatch) {
+      /* This is creating a JWT token. */
       const jwtToken = jwt.sign(
         {
           _id: userExist._id,
