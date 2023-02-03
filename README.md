@@ -19,7 +19,7 @@ Role: Administrator.
 
 The project has a module to recover the password, which sends an email to the user with a link and a unique token.
 
-# this is the backend of the project (see [frontend](https://github.com/Diego-Fdez/school-app 'frontend')) it was started with npm create vite@latest
+# this is the backend of the project (see [frontend](https://github.com/Diego-Fdez/school-app 'frontend')) it was started with npm init
 
 ### This Project Only For developing my Skill
 
