@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-//función que envía correo de recuperación de cuenta
+//function that sends account recovery mail
 
 export const emailForgetPassword = async (data) => {
   const { email, userName, token } = data;
@@ -14,11 +14,11 @@ export const emailForgetPassword = async (data) => {
     },
   });
 
-  //información del email
-  const info = await transport.sendMail({
+  //email body
+  await transport.sendMail({
     from: '"SchoolOffice App" <accounts@schoolofficeapp.com>',
     to: email,
-    subject: 'UpTask - Restablece tu contraseña',
+    subject: 'School Office - reset your password',
     text: 'Reset your password.',
     html: `
     <p>Hi: ${userName}, you have requested to reset your password</p>
