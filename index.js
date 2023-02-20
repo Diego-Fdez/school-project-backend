@@ -1,41 +1,13 @@
-import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import mongoose from 'mongoose';
-import UserRoute from './routes/UserRoute.js';
-import StudentRoute from './routes/studentRoute.js';
-import quarterRoutes from './routes/quarterRoutes.js';
-import courseRoutes from './routes/courseRoutes.js';
-import quarterResultsRoutes from './routes/quarterResultsRoutes.js';
-import assistsRoute from './routes/assistsRoute.js';
-import levelRoutes from './routes/levelRoutes.js';
-import sectionRoute from './routes/sectionRoute.js';
-
-//Routes
-const app = express();
-app.use(express.json());
+import app from './app.js';
+import { DbConnect } from './database/dbConnection.js';
 
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-/**
- * It connects to the MongoDB database using the Mongoose library.
- */
-const DbConnect = async () => {
-  try {
-    const connection = await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    const url = `${connection.connection.host}:
-    ${connection.connection.port}`;
-    console.log(url);
-  } catch (error) {
-    console.log(`error: ${error.message}`);
-    process.exit(1);
-  }
-};
+/* Connecting to the database. */
 DbConnect();
 
 //cors configuration
@@ -59,13 +31,3 @@ app.use(cors(corsOptions));
 app.listen(PORT, () => {
   console.log(`Listening ${PORT}`);
 });
-
-//usage of routes
-app.use('/auth', UserRoute);
-app.use('/student', StudentRoute);
-app.use('/quarter', quarterRoutes);
-app.use('/course', courseRoutes);
-app.use('/qt-results', quarterResultsRoutes);
-app.use('/assists', assistsRoute);
-app.use('/levels', levelRoutes);
-app.use('/list', sectionRoute);
